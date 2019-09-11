@@ -1263,7 +1263,8 @@ components:
         subscribers:
           description: DSS subscribers that this client now has the obligation to
             notify of the Identification Service Area changes just made.  This client
-            must call POST for each provided URL according to the `/uss/identification_service_areas/{id}`
+            must call POST for each provided URL (after appending the Identification
+            Service Area UUID) according to the `/uss/identification_service_areas/{id}`
             path API.
           type: array
           items:
@@ -1332,7 +1333,8 @@ components:
           - $ref: '#/components/schemas/URL'
           description: The endpoint that the client mutating the airspace should provide
             the update to.  API depends on the DSS action taken that triggered this
-            notification request.
+            notification request.  This is the base endpoint URL.  The client must append
+            `/{id}` to this URL before making a request.
     DeleteIdentificationServiceAreaResponse:
       description: Response for a request to delete an Identification Service Area.
       required:
@@ -1347,7 +1349,8 @@ components:
         subscribers:
           description: DSS subscribers that this client now has the obligation to
             notify of the Identification Service Area just deleted.  This client must
-            call POST for each provided URL according to the `/uss/identification_service_areas`
+            call POST for each provided URL (after appending the Identification
+            Service Area UUID) according to the `/uss/identification_service_areas`
             path API.
           type: array
           items:
@@ -1359,7 +1362,7 @@ components:
         Areas may be delivered.  See the `/uss/identification_service_areas/{id}`
         path for specification of this endpoint.
       type: string
-      example: https://example.com/identification_service_areas/a4c6f8c0-ad77-4d93-9cc2-ec8601383f96
+      example: https://example.com/v1/uss/identification_service_areas
     SubscriptionCallbacks:
       description: Endpoints that should be called when an applicable event occurs.  At
         least one field must be specified.
@@ -1370,9 +1373,11 @@ components:
           - $ref: '#/components/schemas/IdentificationServiceAreaURL'
           description: If specified, other clients will be instructed by the DSS to
             call this endpoint when an Identification Service Area relevant to this
-            Subscription is created, modified, or deleted.  Must implement PUT and
-            DELETE according to the `/uss/identification_service_areas/{id}` path
-            API.
+            Subscription is created, modified, or deleted.  This is the base URL of
+            the endpoint and must NOT end with a '/' character.
+            Other clients will call this endpoint by appending `/{id}` to this URL.
+            Must implement POST according to the `/uss/identification_service_areas/{id}`
+            path API.
     PutSubscriptionResponse:
       description: Response for a request to create or update a subscription.
       required:
